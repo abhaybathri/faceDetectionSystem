@@ -1,4 +1,17 @@
 # 🚀 How to Run This Project — Step by Step
+`
+Make sure you are in the project folder. You should see something like:
+C:\Users\abhay\OneDrive\Desktop\faceDetection>
+
+
+now run this command- .\venv\Scripts\python.exe backend/app.py
+
+Wait for this message to appear: ✅  FaceAttend backend running at http://localhost:5000
+
+ Open Chrome and go to:http://localhost:5000
+ `
+ 
+
 
 > No programming experience needed. Just follow each step one by one.  
 > This guide works on **Windows**, **Mac**, and **Linux**.
