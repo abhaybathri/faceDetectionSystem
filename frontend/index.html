@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Face Detection Attendance System</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- ===== NAVBAR ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-brand">
+      <i class="fas fa-face-smile-wink"></i>
+      <span>FaceAttend</span>
+    </div>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#" class="nav-link active" data-page="home"><i class="fas fa-house"></i> Home</a></li>
+      <li><a href="#" class="nav-link" data-page="login"><i class="fas fa-right-to-bracket"></i> Login</a></li>
+      <li><a href="#" class="nav-link" data-page="admin" id="adminNavLink" style="display:none"><i class="fas fa-user-shield"></i> Admin</a></li>
+      <li><a href="#" class="nav-link" data-page="attendance" id="attendanceNavLink" style="display:none"><i class="fas fa-camera"></i> Attendance</a></li>
+      <li><a href="#" class="nav-link" data-page="reports" id="reportsNavLink" style="display:none"><i class="fas fa-chart-bar"></i> Reports</a></li>
+      <li id="logoutNavItem" style="display:none"><a href="#" id="logoutBtn"><i class="fas fa-right-from-bracket"></i> Logout</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle" title="Toggle dark mode">
+        <i class="fas fa-moon"></i>
+      </button>
+      <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+    </div>
+  </nav>
+
+  <!-- ===== PAGES ===== -->
+  <main id="app">
+
+    <!-- HOME PAGE -->
+    <section class="page active" id="page-home">
+      <div class="hero">
+        <div class="hero-content">
+          <span class="badge"><i class="fas fa-bolt"></i> AI-Powered</span>
+          <h1>Face Detection<br /><span class="gradient-text">Attendance System</span></h1>
+          <p>Automate attendance tracking with real-time facial recognition. Fast, accurate, and secure — built for colleges and enterprises.</p>
+          <div class="hero-btns">
+            <button class="btn btn-primary" onclick="navigate('login')"><i class="fas fa-right-to-bracket"></i> Login</button>
+            <button class="btn btn-outline" onclick="navigate('home'); scrollToFeatures()"><i class="fas fa-circle-info"></i> Learn More</button>
+          </div>
+          <div class="hero-stats">
+            <div class="stat"><span>99.8%</span><p>Accuracy</p></div>
+            <div class="stat"><span>&lt;1s</span><p>Detection</p></div>
+            <div class="stat"><span>10k+</span><p>Users</p></div>
+          </div>
+        </div>
+        <div class="hero-visual">
+          <div class="face-scan-anim">
+            <div class="scan-ring r1"></div>
+            <div class="scan-ring r2"></div>
+            <div class="scan-ring r3"></div>
+            <div class="face-icon"><i class="fas fa-user-circle"></i></div>
+            <div class="scan-line"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="section" id="features">
+        <h2 class="section-title">Why Choose FaceAttend?</h2>
+        <p class="section-sub">Everything you need for modern attendance management</p>
+        <div class="cards-grid">
+          <div class="card feature-card">
+            <div class="card-icon blue"><i class="fas fa-bullseye"></i></div>
+            <h3>High Accuracy</h3>
+            <p>99.8% facial recognition accuracy powered by advanced AI algorithms, even in varying lighting conditions.</p>
+          </div>
+          <div class="card feature-card">
+            <div class="card-icon green"><i class="fas fa-robot"></i></div>
+            <h3>Full Automation</h3>
+            <p>Eliminate manual roll calls. Attendance is marked automatically the moment a face is detected.</p>
+          </div>
+          <div class="card feature-card">
+            <div class="card-icon purple"><i class="fas fa-shield-halved"></i></div>
+            <h3>Secure & Private</h3>
+            <p>All biometric data is encrypted and stored securely. No unauthorized access, ever.</p>
+          </div>
+          <div class="card feature-card">
+            <div class="card-icon orange"><i class="fas fa-chart-line"></i></div>
+            <h3>Detailed Reports</h3>
+            <p>Generate attendance reports by date, user, or department with export options.</p>
+          </div>
+          <div class="card feature-card">
+            <div class="card-icon teal"><i class="fas fa-mobile-screen"></i></div>
+            <h3>Mobile Friendly</h3>
+            <p>Fully responsive design works seamlessly on phones, tablets, and desktops.</p>
+          </div>
+          <div class="card feature-card">
+            <div class="card-icon red"><i class="fas fa-clock"></i></div>
+            <h3>Real-Time</h3>
+            <p>Instant attendance marking with live notifications and real-time dashboard updates.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- How it works -->
+      <div class="section how-it-works">
+        <h2 class="section-title">How It Works</h2>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><i class="fas fa-user-plus"></i><h4>Register</h4><p>Admin registers users with their face data</p></div>
+          <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="step"><div class="step-num">2</div><i class="fas fa-camera"></i><h4>Scan</h4><p>User faces the camera for detection</p></div>
+          <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="step"><div class="step-num">3</div><i class="fas fa-check-circle"></i><h4>Verified</h4><p>System matches and marks attendance</p></div>
+          <div class="step-arrow"><i class="fas fa-arrow-right"></i></div>
+          <div class="step"><div class="step-num">4</div><i class="fas fa-file-alt"></i><h4>Report</h4><p>View detailed attendance reports</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LOGIN PAGE -->
+    <section class="page" id="page-login">
+      <div class="auth-container">
+        <div class="auth-card">
+          <div class="auth-header">
+            <i class="fas fa-face-smile-wink auth-logo"></i>
+            <h2>Welcome Back</h2>
+            <p>Sign in to your account</p>
+          </div>
+          <div class="tab-group">
+            <button class="tab active" data-tab="user">User Login</button>
+            <button class="tab" data-tab="admin">Admin Login</button>
+          </div>
+          <form id="loginForm" novalidate>
+            <div class="form-group">
+              <label><i class="fas fa-envelope"></i> Email / Username</label>
+              <input type="text" id="loginEmail" placeholder="Enter your email or username" />
+              <span class="field-error" id="emailError"></span>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-lock"></i> Password</label>
+              <div class="input-wrap">
+                <input type="password" id="loginPassword" placeholder="Enter your password" />
+                <button type="button" class="toggle-pw" id="togglePw"><i class="fas fa-eye"></i></button>
+              </div>
+              <span class="field-error" id="pwError"></span>
+            </div>
+            <div class="form-row">
+              <label class="checkbox-label"><input type="checkbox" /> Remember me</label>
+              <a href="#" class="link">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn btn-primary full-width" id="loginSubmitBtn">
+              <i class="fas fa-right-to-bracket"></i> Sign In
+            </button>
+            <div class="form-hint">
+              <span id="loginHint">Demo: user@demo.com / password123</span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- USER DASHBOARD -->
+    <section class="page" id="page-dashboard">
+      <div class="dashboard-layout">
+        <aside class="sidebar" id="userSidebar">
+          <div class="sidebar-user">
+            <div class="avatar"><i class="fas fa-user-circle"></i></div>
+            <div>
+              <p class="sidebar-name" id="sidebarName">John Doe</p>
+              <span class="role-badge user">Student</span>
+            </div>
+          </div>
+          <nav class="sidebar-nav">
+            <a href="#" class="sidebar-link active" onclick="showDashTab('overview')"><i class="fas fa-gauge"></i> Overview</a>
+            <a href="#" class="sidebar-link" onclick="navigate('attendance')"><i class="fas fa-camera"></i> Mark Attendance</a>
+            <a href="#" class="sidebar-link" onclick="navigate('reports')"><i class="fas fa-chart-bar"></i> My Reports</a>
+            <a href="#" class="sidebar-link" onclick="navigate('login')"><i class="fas fa-right-from-bracket"></i> Logout</a>
+          </nav>
+        </aside>
+        <div class="dashboard-main">
+          <div class="dash-header">
+            <div>
+              <h2>Welcome back, <span id="dashWelcomeName">John</span> 👋</h2>
+              <p class="dash-date" id="dashDate"></p>
+            </div>
+            <button class="btn btn-primary" onclick="navigate('attendance')"><i class="fas fa-camera"></i> Mark Attendance</button>
+          </div>
+          <div class="cards-grid mini">
+            <div class="card stat-card">
+              <div class="stat-icon blue"><i class="fas fa-calendar-check"></i></div>
+              <div><p>Present Days</p><h3 id="userPresent">18</h3></div>
+            </div>
+            <div class="card stat-card">
+              <div class="stat-icon red"><i class="fas fa-calendar-xmark"></i></div>
+              <div><p>Absent Days</p><h3 id="userAbsent">3</h3></div>
+            </div>
+            <div class="card stat-card">
+              <div class="stat-icon green"><i class="fas fa-percent"></i></div>
+              <div><p>Attendance %</p><h3 id="userPercent">85.7%</h3></div>
+            </div>
+          </div>
+          <div class="card recent-card">
+            <h3><i class="fas fa-clock-rotate-left"></i> Recent Attendance</h3>
+            <table class="data-table">
+              <thead><tr><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+              <tbody id="userRecentTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ADMIN DASHBOARD -->
+    <section class="page" id="page-admin">
+      <div class="dashboard-layout">
+        <aside class="sidebar">
+          <div class="sidebar-user">
+            <div class="avatar admin-av"><i class="fas fa-user-shield"></i></div>
+            <div>
+              <p class="sidebar-name">Admin</p>
+              <span class="role-badge admin">Administrator</span>
+            </div>
+          </div>
+          <nav class="sidebar-nav">
+            <a href="#" class="sidebar-link active" onclick="showAdminTab('overview')"><i class="fas fa-gauge"></i> Overview</a>
+            <a href="#" class="sidebar-link" onclick="navigate('manage-users')"><i class="fas fa-users-gear"></i> Manage Users</a>
+            <a href="#" class="sidebar-link" onclick="navigate('reports')"><i class="fas fa-chart-bar"></i> Reports</a>
+            <a href="#" class="sidebar-link" onclick="navigate('login')"><i class="fas fa-right-from-bracket"></i> Logout</a>
+          </nav>
+        </aside>
+        <div class="dashboard-main">
+          <div class="dash-header">
+            <div>
+              <h2>Admin Dashboard</h2>
+              <p class="dash-date" id="adminDashDate"></p>
+            </div>
+            <button class="btn btn-primary" onclick="navigate('manage-users')"><i class="fas fa-user-plus"></i> Add User</button>
+          </div>
+          <div class="cards-grid mini">
+            <div class="card stat-card">
+              <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+              <div><p>Total Users</p><h3>42</h3></div>
+            </div>
+            <div class="card stat-card">
+              <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
+              <div><p>Present Today</p><h3>35</h3></div>
+            </div>
+            <div class="card stat-card">
+              <div class="stat-icon red"><i class="fas fa-user-xmark"></i></div>
+              <div><p>Absent Today</p><h3>7</h3></div>
+            </div>
+            <div class="card stat-card">
+              <div class="stat-icon purple"><i class="fas fa-percent"></i></div>
+              <div><p>Avg Attendance</p><h3>83.3%</h3></div>
+            </div>
+          </div>
+          <div class="card">
+            <h3><i class="fas fa-table"></i> Today's Summary</h3>
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>ID</th><th>Time In</th><th>Status</th></tr></thead>
+              <tbody id="adminSummaryTable"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FACE DETECTION PAGE -->
+    <section class="page" id="page-attendance">
+      <div class="fd-container">
+        <div class="fd-header">
+          <h2><i class="fas fa-camera"></i> Mark Attendance</h2>
+          <p>Position your face in the frame and click Capture</p>
+        </div>
+        <div class="fd-layout">
+          <div class="camera-box" id="cameraBox">
+            <div class="camera-placeholder" id="cameraPlaceholder">
+              <i class="fas fa-camera-slash"></i>
+              <p>Camera is off</p>
+            </div>
+            <video id="videoFeed" autoplay playsinline style="display:none"></video>
+            <canvas id="snapCanvas" style="display:none"></canvas>
+            <div class="scan-overlay" id="scanOverlay" style="display:none">
+              <div class="face-frame">
+                <span class="corner tl"></span><span class="corner tr"></span>
+                <span class="corner bl"></span><span class="corner br"></span>
+              </div>
+              <div class="scan-beam" id="scanBeam"></div>
+            </div>
+            <div class="detection-badge" id="detectionBadge" style="display:none">
+              <i class="fas fa-check-circle"></i> Face Detected
+            </div>
+          </div>
+          <div class="fd-controls">
+            <div class="card fd-info-card">
+              <h3><i class="fas fa-circle-info"></i> Instructions</h3>
+              <ul>
+                <li><i class="fas fa-check"></i> Ensure good lighting</li>
+                <li><i class="fas fa-check"></i> Face the camera directly</li>
+                <li><i class="fas fa-check"></i> Remove glasses if needed</li>
+                <li><i class="fas fa-check"></i> Stay still during capture</li>
+              </ul>
+            </div>
+            <div class="fd-btn-group">
+              <button class="btn btn-primary" id="startCameraBtn" onclick="startCamera()">
+                <i class="fas fa-video"></i> Start Camera
+              </button>
+              <button class="btn btn-success" id="captureBtn" onclick="captureAttendance()" disabled>
+                <i class="fas fa-camera"></i> Capture & Mark Attendance
+              </button>
+              <button class="btn btn-outline" id="stopCameraBtn" onclick="stopCamera()" style="display:none">
+                <i class="fas fa-video-slash"></i> Stop Camera
+              </button>
+            </div>
+            <div class="fd-status" id="fdStatus"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- REPORTS PAGE -->
+    <section class="page" id="page-reports">
+      <div class="page-container">
+        <div class="page-header">
+          <h2><i class="fas fa-chart-bar"></i> Attendance Reports</h2>
+          <button class="btn btn-outline" onclick="exportReport()"><i class="fas fa-download"></i> Export CSV</button>
+        </div>
+        <div class="card filter-card">
+          <div class="filter-row">
+            <div class="form-group">
+              <label><i class="fas fa-calendar"></i> Filter by Date</label>
+              <input type="date" id="filterDate" />
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-user"></i> Filter by User</label>
+              <select id="filterUser">
+                <option value="">All Users</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label><i class="fas fa-filter"></i> Status</label>
+              <select id="filterStatus">
+                <option value="">All</option>
+                <option>Present</option>
+                <option>Absent</option>
+                <option>Late</option>
+              </select>
+            </div>
+            <button class="btn btn-primary filter-btn" onclick="applyFilter()"><i class="fas fa-search"></i> Search</button>
+          </div>
+        </div>
+        <div class="card">
+          <table class="data-table" id="reportsTable">
+            <thead>
+              <tr><th>Name</th><th>ID</th><th>Date</th><th>Time</th><th>Status</th></tr>
+            </thead>
+            <tbody id="reportsBody"></tbody>
+          </table>
+          <div class="table-footer">
+            <span id="reportCount"></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MANAGE USERS PAGE -->
+    <section class="page" id="page-manage-users">
+      <div class="page-container">
+        <div class="page-header">
+          <h2><i class="fas fa-users-gear"></i> Manage Users</h2>
+        </div>
+        <div class="manage-layout">
+          <div class="card form-card">
+            <h3 id="userFormTitle"><i class="fas fa-user-plus"></i> Add New User</h3>
+            <form id="userForm" novalidate>
+              <input type="hidden" id="editUserId" />
+              <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="uName" placeholder="Enter full name" />
+                <span class="field-error" id="uNameErr"></span>
+              </div>
+              <div class="form-group">
+                <label>User ID</label>
+                <input type="text" id="uId" placeholder="e.g. STU001" />
+                <span class="field-error" id="uIdErr"></span>
+              </div>
+              <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="uEmail" placeholder="user@example.com" />
+                <span class="field-error" id="uEmailErr"></span>
+              </div>
+              <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="uPassword" placeholder="Default: password123" />
+              </div>
+              <div class="form-group">
+                <label>Role</label>
+                <select id="uRole">
+                  <option value="student">Student</option>
+                  <option value="staff">Staff</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <button type="submit" class="btn btn-primary" id="userFormBtn"><i class="fas fa-plus"></i> Add User</button>
+                <button type="button" class="btn btn-outline" onclick="resetUserForm()"><i class="fas fa-rotate-left"></i> Reset</button>
+              </div>
+            </form>
+          </div>
+          <div class="card users-table-card">
+            <div class="table-toolbar">
+              <h3><i class="fas fa-list"></i> User List</h3>
+              <input type="text" id="userSearch" placeholder="Search users..." oninput="renderUsersTable()" />
+            </div>
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>ID</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead>
+              <tbody id="usersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Face Enroll Modal -->
+  <div class="modal-overlay" id="enrollModal" style="display:none" onclick="if(event.target===this)closeEnrollModal()">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="enrollModalTitle"><i class="fas fa-face-smile"></i> Enroll Face</h3>
+        <button class="modal-close" onclick="closeEnrollModal()"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div class="camera-box" style="aspect-ratio:4/3;max-height:300px">
+        <div class="camera-placeholder" id="enrollPlaceholder">
+          <i class="fas fa-camera-slash"></i><p>Starting camera...</p>
+        </div>
+        <video id="enrollVideo" autoplay playsinline style="display:none;width:100%;height:100%;object-fit:cover"></video>
+        <canvas id="enrollCanvas" style="display:none"></canvas>
+      </div>
+      <div class="fd-status" id="enrollStatus"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-primary full-width" id="enrollCaptureBtn" onclick="captureEnroll()" disabled>
+          <i class="fas fa-camera"></i> Capture & Enroll
+        </button>
+        <button class="btn btn-outline" onclick="closeEnrollModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

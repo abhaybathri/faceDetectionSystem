@@ -1,0 +1,12 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+backend/faceattend.db
+backend/*.db
+data/
+.env
+*.egg-info/
+dist/
+build/
+.DS_Store
