@@ -104,29 +104,44 @@ def delete_user(uid):
 
 @users_bp.route("/<int:uid>/enroll", methods=["POST"])
 def enroll_face(uid):
-    """Receive a base64 image, extract face encoding, store in DB."""
+    """
+    Receive multiple base64 images (5 samples), extract face from each,
+    store all samples in DB. More samples = much better accuracy.
+    """
     err = _require_admin()
     if err: return err
 
     if not FR_AVAILABLE:
-        return jsonify({"error": "face_recognition library not installed on server"}), 503
+        return jsonify({"error": "OpenCV not available"}), 503
 
     data = request.get_json()
-    b64_image = data.get("image")
-    if not b64_image:
-        return jsonify({"error": "image required"}), 400
 
-    encoding = encode_face(b64_image)
-    if encoding is None:
-        return jsonify({"error": "No face detected in image. Try again with better lighting."}), 422
+    # Accept either a single image or a list of images
+    images = data.get("images") or []
+    if data.get("image"):
+        images.append(data["image"])
+
+    if not images:
+        return jsonify({"error": "At least one image required"}), 400
+
+    encodings = []
+    for b64_image in images:
+        enc = encode_face(b64_image)
+        if enc is not None:
+            encodings.append(enc)
+
+    if not encodings:
+        return jsonify({"error": "No face detected in any image. Ensure good lighting and face the camera directly."}), 422
 
     conn = get_db()
-    # Replace existing encoding for this user
+    # Remove old encodings for this user
     conn.execute("DELETE FROM face_encodings WHERE user_id = ?", (uid,))
-    conn.execute(
-        "INSERT INTO face_encodings (user_id, encoding) VALUES (?, ?)",
-        (uid, encoding_to_str(encoding))
-    )
+    # Store all samples
+    for enc in encodings:
+        conn.execute(
+            "INSERT INTO face_encodings (user_id, encoding) VALUES (?, ?)",
+            (uid, encoding_to_str(enc))
+        )
     conn.commit()
     conn.close()
-    return jsonify({"message": "Face enrolled successfully"})
+    return jsonify({"message": f"Face enrolled with {len(encodings)} sample(s). Accuracy improved!"})

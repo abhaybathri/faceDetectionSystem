@@ -342,16 +342,25 @@ async function captureAttendance() {
 
     if (result.already) {
       status.className = "fd-status loading";
-      status.innerHTML = `<i class="fas fa-info-circle"></i> ${result.name} — already marked today`;
+      status.innerHTML = `<i class="fas fa-info-circle"></i> Already marked today — ${result.name} (${result.time_in || ""})`;
     } else {
       status.className = "fd-status success";
-      status.innerHTML = `<i class="fas fa-check-circle"></i> Attendance Marked — ${result.name} (${result.time}) · Confidence: ${result.confidence}%`;
+      status.innerHTML = `<i class="fas fa-check-circle"></i> Attendance Marked — ${result.name} · ${result.time} · Confidence: ${result.confidence}%`;
       showToast(`✅ Attendance marked for ${result.name}!`, "success");
     }
     stopCamera();
   } catch (err) {
     status.className = "fd-status error";
-    status.textContent = "❌ " + err.message;
+    // Show a friendly message for face mismatch vs other errors
+    if (err.message.includes("does not match") || err.message.includes("confidence")) {
+      status.innerHTML = `<i class="fas fa-face-frown"></i> Face not recognised as you. Please ensure:<br>
+        • Good lighting on your face<br>
+        • Face the camera directly<br>
+        • Remove glasses if possible<br>
+        • Ask admin to re-enroll your face`;
+    } else {
+      status.textContent = "❌ " + err.message;
+    }
     captureBtn.disabled = false;
   }
 }
@@ -586,20 +595,45 @@ async function captureEnroll() {
   const canvas = document.getElementById("enrollCanvas");
   const status = document.getElementById("enrollStatus");
   const btn    = document.getElementById("enrollCaptureBtn");
+
   btn.disabled = true;
-  status.className = "fd-status loading";
-  status.textContent = "⏳ Processing face...";
-  canvas.width  = video.videoWidth  || 640;
-  canvas.height = video.videoHeight || 480;
-  canvas.getContext("2d").drawImage(video, 0, 0);
-  const b64 = canvas.toDataURL("image/jpeg", 0.8);
+
+  // Capture 8 samples with 500ms gap — varied angles for better accuracy
+  const images = [];
+  const total  = 8;
+  const instructions = [
+    "Look straight at camera",
+    "Slightly turn left",
+    "Slightly turn right",
+    "Tilt head slightly up",
+    "Tilt head slightly down",
+    "Normal position again",
+    "Move slightly closer",
+    "Final capture — hold still"
+  ];
+
+  for (let i = 0; i < total; i++) {
+    status.className = "fd-status loading";
+    status.textContent = `📸 Sample ${i+1}/${total} — ${instructions[i]}`;
+    await new Promise(r => setTimeout(r, 800));
+    canvas.width  = video.videoWidth  || 640;
+    canvas.height = video.videoHeight || 480;
+    canvas.getContext("2d").drawImage(video, 0, 0);
+    images.push(canvas.toDataURL("image/jpeg", 0.9));
+  }
+
+  status.textContent = "⏳ Processing face samples...";
+
   try {
-    await api(`/api/users/${enrollUserId}/enroll`, { method: "POST", body: JSON.stringify({ image: b64 }) });
+    const res = await api(`/api/users/${enrollUserId}/enroll`, {
+      method: "POST",
+      body: JSON.stringify({ images })
+    });
     status.className = "fd-status success";
-    status.textContent = "✅ Face enrolled successfully!";
-    showToast("Face enrolled!", "success");
+    status.textContent = "✅ " + res.message;
+    showToast("Face enrolled with 5 samples!", "success");
     await loadUsers(); renderUsersTable();
-    setTimeout(closeEnrollModal, 1500);
+    setTimeout(closeEnrollModal, 1800);
   } catch (err) {
     status.className = "fd-status error";
     status.textContent = "❌ " + err.message;

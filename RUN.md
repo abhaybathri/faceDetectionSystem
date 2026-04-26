@@ -265,3 +265,106 @@ Open an issue on the GitHub repository and describe your problem. Include:
 - Which step you got stuck on
 
 We're happy to help! 😊
+
+
+---
+
+## ✅ Simple Setup (Read This After Installing Python, Git, and VS Code)
+
+> You cloned the project. Now just follow these steps exactly — like a MERN project but for Python.
+
+---
+
+### Step 1 — Open the project in VS Code
+
+Open VS Code → File → Open Folder → select the `faceDetection` folder
+
+---
+
+### Step 2 — Open Terminal in VS Code
+
+Press `` Ctrl + ` `` (the backtick key, top-left of keyboard)
+
+A terminal opens at the bottom of VS Code.
+
+---
+
+### Step 3 — Create virtual environment
+
+Type this and press Enter:
+
+```
+python -m venv venv
+```
+
+> This is like `npm install` — it creates a local environment for Python packages. Wait for it to finish.
+
+---
+
+### Step 4 — Activate the virtual environment
+
+```
+venv\Scripts\activate
+```
+
+> You will see `(venv)` appear at the start of your terminal line. That means it worked.
+
+---
+
+### Step 5 — Install all dependencies
+
+```
+pip install flask flask-cors opencv-python Pillow numpy scipy gunicorn
+```
+
+> This installs everything the project needs. Wait for it to finish (1-2 minutes).
+
+---
+
+### Step 6 — Start the server
+
+```
+cd backend
+python app.py
+```
+
+> You will see this message:
+> ```
+> ✅  FaceAttend backend running at http://localhost:5000
+> ```
+> **Keep this terminal open. Do not close it.**
+
+---
+
+### Step 7 — Open in browser
+
+Open Chrome or Edge and go to:
+
+```
+http://localhost:5000
+```
+
+Your project is now running! 🎉
+
+---
+
+### Login
+
+```
+Admin  →  admin@demo.com   /  admin123
+User   →  user@demo.com    /  password123
+```
+
+---
+
+### Next time you want to run the project again
+
+Just open VS Code terminal and run:
+
+```
+venv\Scripts\activate
+cd backend
+python app.py
+```
+
+Then open `http://localhost:5000` in your browser.

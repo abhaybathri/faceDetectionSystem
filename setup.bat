@@ -16,16 +16,12 @@ python -m venv venv
 call venv\Scripts\activate.bat
 python -m pip install --upgrade pip --quiet
 
-echo Installing Flask + core packages...
-pip install flask flask-cors Pillow numpy gunicorn --quiet
-
-echo Installing face recognition (dlib pre-built for Windows)...
-pip install cmake --quiet
-pip install dlib-bin --quiet
-pip install face-recognition face-recognition-models --no-deps --quiet
+echo Installing packages (this takes 3-5 minutes)...
+pip install flask flask-cors Pillow numpy gunicorn opencv-contrib-python
+pip install deepface tf-keras
 
 echo.
 echo ============================================
-echo  Done! Run start.bat to launch.
+echo  Done! Run: venv\Scripts\activate then cd backend then python app.py
 echo ============================================
 pause

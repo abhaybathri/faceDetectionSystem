@@ -36,10 +36,23 @@ def _load_all_encodings(conn):
 def recognize():
     """
     Accepts a base64 webcam frame, runs face recognition,
-    marks attendance if matched.
+    and marks attendance ONLY if:
+      1. A face is detected with high confidence
+      2. The detected face matches the currently logged-in user's enrolled face
+    This prevents one person from marking attendance for another.
     """
     if not FR_AVAILABLE:
         return jsonify({"error": "face_recognition not installed on server"}), 503
+
+    # Must be logged in as a real user (not admin)
+    logged_in_user_id = session.get("user_id")
+    logged_in_role    = session.get("user_role")
+
+    if not logged_in_user_id:
+        return jsonify({"error": "You must be logged in to mark attendance"}), 401
+
+    if logged_in_role == "admin":
+        return jsonify({"error": "Admins cannot mark attendance. Login as a user."}), 403
 
     data = request.get_json()
     b64_image = data.get("image")
@@ -47,21 +60,44 @@ def recognize():
         return jsonify({"error": "image required"}), 400
 
     conn = get_db()
-    known = _load_all_encodings(conn)
 
-    if not known:
+    # Load ALL enrolled samples for the logged-in user
+    rows = conn.execute("""
+        SELECT fe.encoding, u.name, u.user_code
+        FROM face_encodings fe
+        JOIN users u ON u.id = fe.user_id
+        WHERE fe.user_id = ?
+    """, (logged_in_user_id,)).fetchall()
+
+    if not rows:
         conn.close()
-        return jsonify({"error": "No enrolled faces in database. Enroll users first."}), 404
+        return jsonify({
+            "error": "Your face is not enrolled yet. Ask admin to enroll your face first."
+        }), 404
 
-    user_id, confidence = recognize_face(b64_image, known)
+    # Build known_encodings list with all samples
+    from face_engine import str_to_encoding
+    known_encodings = [
+        {"user_id": logged_in_user_id, "encoding": str_to_encoding(r["encoding"])}
+        for r in rows
+    ]
+    user_name = rows[0]["name"]
+    user_code = rows[0]["user_code"]
 
+    user_id, confidence = recognize_face(b64_image, known_encodings)
+
+    # Face did not match — majority vote failed
     if user_id is None:
         conn.close()
-        return jsonify({"error": "Face not recognised", "confidence": 0}), 404
+        return jsonify({
+            "error": "Face not recognised. Ensure good lighting, look directly at the camera, "
+                     "and keep your face fully visible. If this keeps happening, ask admin to re-enroll.",
+            "confidence": 0
+        }), 401
 
     # Mark attendance (unique per user per day)
-    today     = date.today().isoformat()
-    time_now  = datetime.now().strftime("%I:%M %p")
+    today    = date.today().isoformat()
+    time_now = datetime.now().strftime("%I:%M %p")
 
     existing = conn.execute(
         "SELECT * FROM attendance WHERE user_id = ? AND date = ?",
@@ -70,14 +106,11 @@ def recognize():
 
     if existing:
         conn.close()
-        conn2 = get_db()
-        u = conn2.execute("SELECT name, user_code FROM users WHERE id = ?", (user_id,)).fetchone()
-        conn2.close()
         return jsonify({
             "message":    "Already marked today",
             "already":    True,
-            "name":       u["name"] if u else "",
-            "user_code":  u["user_code"] if u else "",
+            "name":       user_name,
+            "user_code":  user_code,
             "confidence": confidence
         })
 
@@ -86,15 +119,13 @@ def recognize():
         VALUES (?, ?, ?, 'Present', 'face')
     """, (user_id, today, time_now))
     conn.commit()
-
-    u = conn.execute("SELECT name, user_code FROM users WHERE id = ?", (user_id,)).fetchone()
     conn.close()
 
     return jsonify({
         "message":    "Attendance marked successfully",
         "already":    False,
-        "name":       u["name"],
-        "user_code":  u["user_code"],
+        "name":       user_name,
+        "user_code":  user_code,
         "time":       time_now,
         "confidence": confidence
     })
