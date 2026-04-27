@@ -1,27 +1,25 @@
 @echo off
 echo ============================================
-echo  FaceAttend - Setup Script (Windows)
+echo  FaceAttend College Edition — Setup
 echo ============================================
+echo.
 
-python --version >nul 2>&1
-if errorlevel 1 (
-    echo [ERROR] Python not found!
-    echo Install Python 3.11 from https://www.python.org/downloads/
-    echo Check "Add Python to PATH" during install.
-    pause & exit /b 1
-)
-echo [OK] Python found
-
+echo [1/4] Creating virtual environment...
 python -m venv venv
-call venv\Scripts\activate.bat
-python -m pip install --upgrade pip --quiet
+if errorlevel 1 ( echo ERROR: Python not found. Install Python 3.11+ and add to PATH. & pause & exit /b 1 )
 
-echo Installing packages (this takes 3-5 minutes)...
-pip install flask flask-cors Pillow numpy gunicorn opencv-contrib-python
+echo [2/4] Activating virtual environment...
+call venv\Scripts\activate
+
+echo [3/4] Installing core packages...
+pip install flask flask-cors opencv-contrib-python Pillow numpy scipy gunicorn
+
+echo [4/4] Installing AI face recognition packages (this takes 5-10 minutes)...
 pip install deepface tf-keras
 
 echo.
 echo ============================================
-echo  Done! Run: venv\Scripts\activate then cd backend then python app.py
+echo  Setup complete!
+echo  Run start.bat to launch the server.
 echo ============================================
 pause

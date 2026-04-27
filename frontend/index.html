@@ -3,349 +3,643 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Face Detection Attendance System</title>
+  <title>FaceAttend — College Attendance System</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 
-  <!-- NAVBAR -->
-  <nav class="navbar" id="navbar">
-    <div class="nav-brand">
-      <i class="fas fa-face-smile-wink"></i>
-      <span>FaceAttend</span>
-    </div>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="#" class="nav-link" data-page="kiosk"><i class="fas fa-camera"></i> Mark Attendance</a></li>
-      <li><a href="#" class="nav-link" data-page="login" id="navLogin"><i class="fas fa-right-to-bracket"></i> Admin Login</a></li>
-      <li><a href="#" class="nav-link" data-page="admin" id="navAdmin" style="display:none"><i class="fas fa-gauge"></i> Dashboard</a></li>
-      <li><a href="#" class="nav-link" data-page="manage-users" id="navManage" style="display:none"><i class="fas fa-users-gear"></i> Manage Users</a></li>
-      <li><a href="#" class="nav-link" data-page="reports" id="navReports" style="display:none"><i class="fas fa-chart-bar"></i> Reports</a></li>
-      <li id="navLogoutItem" style="display:none"><a href="#" id="logoutBtn"><i class="fas fa-right-from-bracket"></i> Logout</a></li>
-    </ul>
-    <div class="nav-actions">
-      <button class="theme-toggle" id="themeToggle" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
-      <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
-    </div>
-  </nav>
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <div class="nav-brand"><i class="fas fa-face-smile-wink"></i><span>FaceAttend</span></div>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#" class="nav-link" data-page="kiosk" id="navKiosk"><i class="fas fa-camera"></i> Mark Attendance</a></li>
+    <li><a href="#" class="nav-link" data-page="login" id="navLogin"><i class="fas fa-right-to-bracket"></i> Login</a></li>
+    <li><a href="#" class="nav-link" data-page="admin-dash" id="navAdminDash" style="display:none"><i class="fas fa-gauge"></i> Dashboard</a></li>
+    <li><a href="#" class="nav-link" data-page="teacher-dash" id="navTeacherDash" style="display:none"><i class="fas fa-chalkboard-teacher"></i> Dashboard</a></li>
+    <li id="navLogoutItem" style="display:none"><a href="#" id="logoutBtn"><i class="fas fa-right-from-bracket"></i> Logout</a></li>
+  </ul>
+  <div class="nav-actions">
+    <button class="theme-toggle" id="themeToggle" title="Toggle dark mode"><i class="fas fa-moon"></i></button>
+    <button class="hamburger" id="hamburger"><i class="fas fa-bars"></i></button>
+  </div>
+</nav>
 
-  <main id="app">
+<main id="app">
 
-    <!-- ===== KIOSK — MARK ATTENDANCE (public, no login) ===== -->
-    <section class="page active" id="page-kiosk">
-      <div class="fd-container">
-        <div class="fd-header">
-          <h2><i class="fas fa-camera"></i> Mark Your Attendance</h2>
-          <p>Look directly at the camera and click Capture</p>
+<!-- ===== LOGIN PAGE ===== -->
+<section class="page active" id="page-login">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <i class="fas fa-user-shield auth-logo"></i>
+        <h2>FaceAttend Login</h2>
+        <p>College Attendance Management System</p>
+      </div>
+      <div class="tab-group">
+        <button class="tab active" data-tab="admin" id="tabAdmin">Admin</button>
+        <button class="tab" data-tab="teacher" id="tabTeacher">Teacher</button>
+      </div>
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label><i class="fas fa-envelope"></i> Gmail Address</label>
+          <input type="text" id="loginEmail" placeholder="yourname@gmail.com" autocomplete="email" />
+          <span class="field-error" id="emailError"></span>
         </div>
-        <div class="fd-layout">
-          <div class="camera-box" id="kioskCameraBox">
-            <div class="camera-placeholder" id="kioskPlaceholder">
-              <i class="fas fa-camera-slash"></i>
-              <p>Camera is off</p>
-            </div>
-            <video id="kioskVideo" autoplay playsinline style="display:none"></video>
-            <canvas id="kioskCanvas" style="display:none"></canvas>
-            <div class="scan-overlay" id="kioskOverlay" style="display:none">
-              <div class="face-frame">
-                <span class="corner tl"></span><span class="corner tr"></span>
-                <span class="corner bl"></span><span class="corner br"></span>
-              </div>
-              <div class="scan-beam"></div>
-            </div>
+        <div class="form-group">
+          <label><i class="fas fa-lock"></i> Password</label>
+          <div class="input-wrap">
+            <input type="password" id="loginPassword" placeholder="Enter your password" autocomplete="current-password" />
+            <button type="button" class="toggle-pw" id="togglePw"><i class="fas fa-eye"></i></button>
           </div>
-          <div class="fd-controls">
-            <div class="card fd-info-card">
-              <h3><i class="fas fa-circle-info"></i> Instructions</h3>
-              <ul>
-                <li><i class="fas fa-check"></i> Ensure good lighting</li>
-                <li><i class="fas fa-check"></i> Look directly at camera</li>
-                <li><i class="fas fa-check"></i> Keep face fully visible</li>
-                <li><i class="fas fa-check"></i> Stay still during capture</li>
-                <li><i class="fas fa-check"></i> Remove sunglasses</li>
-              </ul>
+          <span class="field-error" id="pwError"></span>
+        </div>
+        <div class="form-row" id="forgotRow">
+          <span></span>
+          <a href="#" class="link" id="forgotLink">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn btn-primary full-width" id="loginSubmitBtn">
+          <i class="fas fa-right-to-bracket"></i> Sign In
+        </button>
+        <div class="form-hint">Default admin: admin@gmail.com / admin123</div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ===== RESET PASSWORD PAGE ===== -->
+<section class="page" id="page-reset">
+  <div class="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <i class="fas fa-key auth-logo"></i>
+        <h2>Reset Password</h2>
+        <p>Enter your Gmail to receive an OTP</p>
+      </div>
+      <div id="resetStep1">
+        <div class="form-group">
+          <label><i class="fas fa-envelope"></i> Gmail Address</label>
+          <input type="text" id="resetEmail" placeholder="yourname@gmail.com" />
+          <span class="field-error" id="resetEmailErr"></span>
+        </div>
+        <button class="btn btn-primary full-width" onclick="sendResetOtp()">
+          <i class="fas fa-paper-plane"></i> Send OTP
+        </button>
+        <div style="margin-top:14px;text-align:center">
+          <a href="#" class="link" onclick="navigate('login')">Back to Login</a>
+        </div>
+      </div>
+      <div id="resetStep2" style="display:none">
+        <div class="otp-info-box">
+          <i class="fas fa-envelope-circle-check"></i>
+          OTP sent to <strong id="resetEmailDisplay"></strong>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-shield-halved"></i> Enter OTP</label>
+          <input type="text" id="resetOtp" placeholder="6-digit OTP" maxlength="6" />
+          <span class="field-error" id="resetOtpErr"></span>
+        </div>
+        <div class="form-group">
+          <label><i class="fas fa-lock"></i> New Password</label>
+          <div class="input-wrap">
+            <input type="password" id="resetNewPw" placeholder="Min 6 characters" />
+            <button type="button" class="toggle-pw" onclick="togglePwField('resetNewPw',this)"><i class="fas fa-eye"></i></button>
+          </div>
+          <span class="field-error" id="resetNewPwErr"></span>
+        </div>
+        <button class="btn btn-primary full-width" onclick="doResetPassword()">
+          <i class="fas fa-check"></i> Reset Password
+        </button>
+        <div style="margin-top:10px;text-align:center">
+          <a href="#" class="link" onclick="document.getElementById('resetStep1').style.display='';document.getElementById('resetStep2').style.display='none'">Resend OTP</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== KIOSK — MARK ATTENDANCE (teacher must be logged in) ===== -->
+<section class="page" id="page-kiosk">
+  <div class="fd-container">
+    <div class="fd-header">
+      <h2><i class="fas fa-camera"></i> Mark Attendance</h2>
+      <p id="kioskClassLabel">Select your class below to begin</p>
+    </div>
+    <!-- Class selector (shown when teacher is logged in) -->
+    <div class="card" id="kioskClassSelector" style="max-width:500px;margin:0 auto 24px">
+      <h3 style="margin-bottom:16px"><i class="fas fa-chalkboard"></i> Select Class</h3>
+      <div class="form-group">
+        <label>Assigned Class / Section</label>
+        <select id="kioskClassSelect">
+          <option value="">-- Select Class --</option>
+        </select>
+      </div>
+      <button class="btn btn-primary" onclick="kioskSelectClass()"><i class="fas fa-check"></i> Confirm Class</button>
+    </div>
+    <div id="kioskMain" style="display:none">
+      <div class="kiosk-class-badge" id="kioskClassBadge"></div>
+      <div class="fd-layout">
+        <div class="camera-box" id="kioskCameraBox">
+          <div class="camera-placeholder" id="kioskPlaceholder"><i class="fas fa-camera-slash"></i><p>Camera is off</p></div>
+          <video id="kioskVideo" autoplay playsinline style="display:none"></video>
+          <canvas id="kioskCanvas" style="display:none"></canvas>
+          <div class="scan-overlay" id="kioskOverlay" style="display:none">
+            <div class="face-frame">
+              <span class="corner tl"></span><span class="corner tr"></span>
+              <span class="corner bl"></span><span class="corner br"></span>
             </div>
-            <div class="fd-btn-group">
-              <button class="btn btn-primary" id="kioskStartBtn" onclick="kioskStart()">
-                <i class="fas fa-video"></i> Start Camera
-              </button>
-              <button class="btn btn-success" id="kioskCaptureBtn" onclick="kioskCapture()" disabled>
-                <i class="fas fa-camera"></i> Capture & Mark Attendance
-              </button>
-              <button class="btn btn-outline" id="kioskStopBtn" onclick="kioskStop()" style="display:none">
-                <i class="fas fa-video-slash"></i> Stop Camera
-              </button>
-            </div>
-            <div class="fd-status" id="kioskStatus"></div>
-            <!-- Result card shown after successful mark -->
-            <div class="result-card" id="kioskResult" style="display:none">
-              <div class="result-icon"><i class="fas fa-circle-check"></i></div>
-              <div class="result-info">
-                <h3 id="resultName"></h3>
-                <p id="resultCode"></p>
-                <p id="resultTime"></p>
-                <p id="resultConf"></p>
-              </div>
+            <div class="scan-beam"></div>
+          </div>
+        </div>
+        <div class="fd-controls">
+          <div class="card fd-info-card">
+            <h3><i class="fas fa-circle-info"></i> Instructions</h3>
+            <ul>
+              <li><i class="fas fa-check"></i> Ensure good lighting</li>
+              <li><i class="fas fa-check"></i> Look directly at camera</li>
+              <li><i class="fas fa-check"></i> Keep face fully visible</li>
+              <li><i class="fas fa-check"></i> Stay still during capture</li>
+              <li><i class="fas fa-check"></i> Remove sunglasses</li>
+            </ul>
+          </div>
+          <div class="fd-btn-group">
+            <button class="btn btn-primary" id="kioskStartBtn" onclick="kioskStart()"><i class="fas fa-video"></i> Start Camera</button>
+            <button class="btn btn-success" id="kioskCaptureBtn" onclick="kioskCapture()" disabled><i class="fas fa-camera"></i> Capture & Mark Attendance</button>
+            <button class="btn btn-outline" id="kioskStopBtn" onclick="kioskStop()" style="display:none"><i class="fas fa-video-slash"></i> Stop Camera</button>
+            <button class="btn btn-outline" onclick="kioskChangeClass()" style="font-size:0.82rem"><i class="fas fa-rotate-left"></i> Change Class</button>
+          </div>
+          <div class="fd-status" id="kioskStatus"></div>
+          <div class="result-card" id="kioskResult" style="display:none">
+            <div class="result-icon"><i class="fas fa-circle-check"></i></div>
+            <div class="result-info">
+              <h3 id="resultName"></h3>
+              <p id="resultRoll"></p>
+              <p id="resultClass"></p>
+              <p id="resultTime"></p>
+              <p id="resultConf"></p>
             </div>
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <!-- ===== ADMIN LOGIN ===== -->
-    <section class="page" id="page-login">
-      <div class="auth-container">
-        <div class="auth-card">
-          <div class="auth-header">
-            <i class="fas fa-user-shield auth-logo"></i>
-            <h2>Admin Login</h2>
-            <p>Sign in to manage the attendance system</p>
+
+<!-- ===== ADMIN DASHBOARD ===== -->
+<section class="page" id="page-admin-dash">
+  <div class="dashboard-layout">
+    <aside class="sidebar" id="adminSidebar">
+      <div class="sidebar-user">
+        <div class="avatar admin-av"><i class="fas fa-user-shield"></i></div>
+        <div><p class="sidebar-name" id="adminSidebarName">Administrator</p><span class="role-badge admin">Admin</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-link active" onclick="navigate('admin-dash')"><i class="fas fa-gauge"></i> Dashboard</a>
+        <a href="#" class="sidebar-link" onclick="navigate('manage-structure')"><i class="fas fa-sitemap"></i> Manage Structure</a>
+        <a href="#" class="sidebar-link" onclick="navigate('manage-teachers')"><i class="fas fa-chalkboard-teacher"></i> Manage Teachers</a>
+        <a href="#" class="sidebar-link" onclick="navigate('manage-students')"><i class="fas fa-user-graduate"></i> Manage Students</a>
+        <a href="#" class="sidebar-link" onclick="navigate('admin-reports')"><i class="fas fa-chart-bar"></i> Reports</a>
+        <a href="#" class="sidebar-link logout-link" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</a>
+      </nav>
+    </aside>
+    <div class="dashboard-main">
+      <div class="dash-header">
+        <div><h2>Admin Dashboard</h2><p class="dash-date" id="adminDashDate"></p></div>
+      </div>
+      <div class="cards-grid mini">
+        <div class="card stat-card"><div class="stat-icon blue"><i class="fas fa-chalkboard-teacher"></i></div><div><p>Teachers</p><h3 id="statTeachers">—</h3></div></div>
+        <div class="card stat-card"><div class="stat-icon purple"><i class="fas fa-user-graduate"></i></div><div><p>Students</p><h3 id="statStudents">—</h3></div></div>
+        <div class="card stat-card"><div class="stat-icon green"><i class="fas fa-user-check"></i></div><div><p>Present Today</p><h3 id="statPresent">—</h3></div></div>
+        <div class="card stat-card"><div class="stat-icon red"><i class="fas fa-user-xmark"></i></div><div><p>Absent Today</p><h3 id="statAbsent">—</h3></div></div>
+      </div>
+      <!-- Attendance by class filter -->
+      <div class="card" style="margin-top:24px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:12px">
+          <h3><i class="fas fa-table"></i> Today's Attendance</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <select id="adminFilterBranch" class="filter-select" onchange="adminFilterClass()"><option value="">All Branches</option></select>
+            <select id="adminFilterClass" class="filter-select" onchange="adminFilterClass()"><option value="">All Classes</option></select>
+            <select id="adminFilterSection" class="filter-select" onchange="adminFilterClass()"><option value="">All Sections</option></select>
           </div>
-          <form id="loginForm" novalidate>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Roll No</th><th>Branch</th><th>Class</th><th>Section</th><th>Time In</th><th>Status</th></tr></thead>
+          <tbody id="adminSummaryTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== MANAGE TEACHERS ===== -->
+<section class="page" id="page-manage-teachers">
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-user"><div class="avatar admin-av"><i class="fas fa-user-shield"></i></div><div><p class="sidebar-name">Administrator</p><span class="role-badge admin">Admin</span></div></div>
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-link" onclick="navigate('admin-dash')"><i class="fas fa-gauge"></i> Dashboard</a>
+        <a href="#" class="sidebar-link" onclick="navigate('manage-structure')"><i class="fas fa-sitemap"></i> Manage Structure</a>
+        <a href="#" class="sidebar-link active" onclick="navigate('manage-teachers')"><i class="fas fa-chalkboard-teacher"></i> Manage Teachers</a>
+        <a href="#" class="sidebar-link" onclick="navigate('manage-students')"><i class="fas fa-user-graduate"></i> Manage Students</a>
+        <a href="#" class="sidebar-link" onclick="navigate('admin-reports')"><i class="fas fa-chart-bar"></i> Reports</a>
+        <a href="#" class="sidebar-link logout-link" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</a>
+      </nav>
+    </aside>
+    <div class="dashboard-main">
+      <div class="dash-header"><h2><i class="fas fa-chalkboard-teacher"></i> Manage Teachers</h2></div>
+      <div class="manage-layout">
+        <!-- Add Teacher Form -->
+        <div class="card form-card">
+          <h3 id="teacherFormTitle"><i class="fas fa-user-plus"></i> Add New Teacher</h3>
+          <form id="teacherForm" novalidate>
             <div class="form-group">
-              <label><i class="fas fa-envelope"></i> Email</label>
-              <input type="text" id="loginEmail" placeholder="admin@demo.com" />
-              <span class="field-error" id="emailError"></span>
+              <label>Full Name</label>
+              <input type="text" id="tName" placeholder="e.g. Dr. Sharma" />
+              <span class="field-error" id="tNameErr"></span>
             </div>
             <div class="form-group">
-              <label><i class="fas fa-lock"></i> Password</label>
-              <div class="input-wrap">
-                <input type="password" id="loginPassword" placeholder="Enter password" />
-                <button type="button" class="toggle-pw" id="togglePw"><i class="fas fa-eye"></i></button>
+              <label>Gmail Address</label>
+              <div style="display:flex;gap:8px">
+                <input type="text" id="tEmail" placeholder="teacher@gmail.com" style="flex:1" />
+                <button type="button" class="btn btn-outline" style="white-space:nowrap;padding:8px 12px;font-size:0.82rem" onclick="sendTeacherOtp()"><i class="fas fa-paper-plane"></i> Send OTP</button>
               </div>
-              <span class="field-error" id="pwError"></span>
+              <span class="field-error" id="tEmailErr"></span>
             </div>
-            <button type="submit" class="btn btn-primary full-width" id="loginSubmitBtn">
-              <i class="fas fa-right-to-bracket"></i> Sign In
-            </button>
-            <div class="form-hint">Demo: admin@demo.com / admin123</div>
+            <div class="form-group" id="tOtpGroup" style="display:none">
+              <div class="otp-info-box"><i class="fas fa-envelope-circle-check"></i> OTP sent! Check inbox.</div>
+              <label>Enter OTP</label>
+              <input type="text" id="tOtp" placeholder="6-digit OTP" maxlength="6" />
+              <span class="field-error" id="tOtpErr"></span>
+            </div>
+            <div class="form-row">
+              <button type="submit" class="btn btn-primary" id="teacherFormBtn"><i class="fas fa-plus"></i> Create Account</button>
+              <button type="button" class="btn btn-outline" onclick="resetTeacherForm()"><i class="fas fa-rotate-left"></i> Reset</button>
+            </div>
+          </form>
+          <!-- Assign Class to Teacher -->
+          <div id="assignSection" style="display:none;margin-top:24px;border-top:1px solid var(--border);padding-top:20px">
+            <h3 style="margin-bottom:14px"><i class="fas fa-link"></i> Assign Class to <span id="assignTeacherName"></span></h3>
+            <div class="form-group">
+              <label>Branch</label>
+              <select id="assignBranch" onchange="onAssignBranchChange()">
+                <option value="">-- Select Branch --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Class / Year</label>
+              <select id="assignClass" onchange="onAssignClassChange()" disabled>
+                <option value="">-- Select Class --</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Section</label>
+              <select id="assignSection2" disabled>
+                <option value="">-- Select Section --</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" onclick="addAssignment()"><i class="fas fa-plus"></i> Assign</button>
+            <div id="assignmentsList" style="margin-top:14px"></div>
+          </div>
+        </div>
+        <!-- Teachers Table -->
+        <div class="card users-table-card">
+          <div class="table-toolbar">
+            <h3><i class="fas fa-list"></i> Teachers</h3>
+            <input type="text" id="teacherSearch" placeholder="Search..." oninput="renderTeachersTable()" />
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Name</th><th>Email</th><th>Classes</th><th>Actions</th></tr></thead>
+            <tbody id="teachersTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== MANAGE STUDENTS ===== -->
+<section class="page" id="page-manage-students">
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-user"><div class="avatar admin-av"><i class="fas fa-user-shield"></i></div><div><p class="sidebar-name">Administrator</p><span class="role-badge admin">Admin</span></div></div>
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-link" onclick="navigate('admin-dash')"><i class="fas fa-gauge"></i> Dashboard</a>
+        <a href="#" class="sidebar-link" onclick="navigate('manage-teachers')"><i class="fas fa-chalkboard-teacher"></i> Manage Teachers</a>
+        <a href="#" class="sidebar-link active" onclick="navigate('manage-students')"><i class="fas fa-user-graduate"></i> Manage Students</a>
+        <a href="#" class="sidebar-link" onclick="navigate('admin-reports')"><i class="fas fa-chart-bar"></i> Reports</a>
+        <a href="#" class="sidebar-link logout-link" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</a>
+      </nav>
+    </aside>
+    <div class="dashboard-main">
+      <div class="dash-header"><h2><i class="fas fa-user-graduate"></i> Manage Students</h2></div>
+      <div class="manage-layout">
+        <!-- Add Student Form -->
+        <div class="card form-card">
+          <h3 id="studentFormTitle"><i class="fas fa-user-plus"></i> Add New Student</h3>
+          <form id="studentForm" novalidate>
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="sName" placeholder="e.g. Rahul Sharma" />
+              <span class="field-error" id="sNameErr"></span>
+            </div>
+            <div class="form-group">
+              <label>Roll Number</label>
+              <input type="text" id="sRoll" placeholder="e.g. 2024CS001" />
+              <span class="field-error" id="sRollErr"></span>
+            </div>
+            <div class="form-group">
+              <label>Gmail Address</label>
+              <div style="display:flex;gap:8px">
+                <input type="text" id="sEmail" placeholder="student@gmail.com" style="flex:1" />
+                <button type="button" class="btn btn-outline" style="white-space:nowrap;padding:8px 12px;font-size:0.82rem" onclick="sendStudentOtp()"><i class="fas fa-paper-plane"></i> Send OTP</button>
+              </div>
+              <span class="field-error" id="sEmailErr"></span>
+            </div>
+            <div class="form-group" id="sOtpGroup" style="display:none">
+              <div class="otp-info-box"><i class="fas fa-envelope-circle-check"></i> OTP sent! Check inbox.</div>
+              <label>Enter OTP</label>
+              <input type="text" id="sOtp" placeholder="6-digit OTP" maxlength="6" />
+              <span class="field-error" id="sOtpErr"></span>
+            </div>
+            <div class="form-group">
+              <label>Branch</label>
+              <select id="sBranch" onchange="onStudentBranchChange()">
+                <option value="">-- Select Branch --</option>
+              </select>
+              <span class="field-error" id="sBranchErr"></span>
+            </div>
+            <div class="form-group">
+              <label>Class / Year</label>
+              <select id="sClass" onchange="onStudentClassChange()" disabled>
+                <option value="">-- Select Class --</option>
+              </select>
+              <span class="field-error" id="sClassErr"></span>
+            </div>
+            <div class="form-group">
+              <label>Section</label>
+              <select id="sSection" disabled>
+                <option value="">-- Select Section --</option>
+              </select>
+              <span class="field-error" id="sSectionErr"></span>
+            </div>
+            <div class="form-row">
+              <button type="submit" class="btn btn-primary" id="studentFormBtn"><i class="fas fa-plus"></i> Add Student</button>
+              <button type="button" class="btn btn-outline" onclick="resetStudentForm()"><i class="fas fa-rotate-left"></i> Reset</button>
+            </div>
           </form>
         </div>
-      </div>
-    </section>
-
-    <!-- ===== ADMIN DASHBOARD ===== -->
-    <section class="page" id="page-admin">
-      <div class="dashboard-layout">
-        <aside class="sidebar">
-          <div class="sidebar-user">
-            <div class="avatar admin-av"><i class="fas fa-user-shield"></i></div>
-            <div>
-              <p class="sidebar-name">Administrator</p>
-              <span class="role-badge admin">Admin</span>
+        <!-- Students Table -->
+        <div class="card users-table-card">
+          <div class="table-toolbar" style="flex-wrap:wrap;gap:8px">
+            <h3><i class="fas fa-list"></i> Students</h3>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <input type="text" id="studentSearch" placeholder="Search..." oninput="renderStudentsTable()" style="width:140px" />
+              <select id="sFilterBranch" class="filter-select" onchange="renderStudentsTable()"><option value="">All Branches</option></select>
+              <select id="sFilterClass" class="filter-select" onchange="renderStudentsTable()"><option value="">All Classes</option></select>
+              <select id="sFilterSection" class="filter-select" onchange="renderStudentsTable()"><option value="">All Sections</option></select>
             </div>
           </div>
-          <nav class="sidebar-nav">
-            <a href="#" class="sidebar-link active" onclick="navigate('admin')"><i class="fas fa-gauge"></i> Dashboard</a>
-            <a href="#" class="sidebar-link" onclick="navigate('manage-users')"><i class="fas fa-users-gear"></i> Manage Users</a>
-            <a href="#" class="sidebar-link" onclick="navigate('reports')"><i class="fas fa-chart-bar"></i> Reports</a>
-            <a href="#" class="sidebar-link" onclick="navigate('kiosk')"><i class="fas fa-camera"></i> Take Attendance</a>
-            <a href="#" class="sidebar-link logout-link" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</a>
-          </nav>
-        </aside>
-        <div class="dashboard-main">
-          <div class="dash-header">
-            <div>
-              <h2>Admin Dashboard</h2>
-              <p class="dash-date" id="adminDashDate"></p>
-            </div>
-            <button class="btn btn-primary" onclick="navigate('kiosk')"><i class="fas fa-camera"></i> Take Attendance</button>
-          </div>
-          <div class="cards-grid mini">
-            <div class="card stat-card">
-              <div class="stat-icon blue"><i class="fas fa-users"></i></div>
-              <div><p>Total Users</p><h3 id="statTotal">—</h3></div>
-            </div>
-            <div class="card stat-card">
-              <div class="stat-icon green"><i class="fas fa-user-check"></i></div>
-              <div><p>Present Today</p><h3 id="statPresent">—</h3></div>
-            </div>
-            <div class="card stat-card">
-              <div class="stat-icon red"><i class="fas fa-user-xmark"></i></div>
-              <div><p>Absent Today</p><h3 id="statAbsent">—</h3></div>
-            </div>
-            <div class="card stat-card">
-              <div class="stat-icon purple"><i class="fas fa-percent"></i></div>
-              <div><p>Attendance %</p><h3 id="statPct">—</h3></div>
-            </div>
-          </div>
-          <div class="card" style="margin-top:24px">
-            <h3 style="margin-bottom:16px"><i class="fas fa-table"></i> Today's Attendance</h3>
-            <table class="data-table">
-              <thead><tr><th>Name</th><th>ID</th><th>Time In</th><th>Status</th></tr></thead>
-              <tbody id="adminSummaryTable"></tbody>
-            </table>
-          </div>
+          <table class="data-table">
+            <thead><tr><th>Name</th><th>Roll No</th><th>Branch</th><th>Class</th><th>Section</th><th>Face</th><th>Actions</th></tr></thead>
+            <tbody id="studentsTableBody"></tbody>
+          </table>
         </div>
-      </div>
-    </section>
-
-    <!-- ===== MANAGE USERS ===== -->
-    <section class="page" id="page-manage-users">
-      <div class="dashboard-layout">
-        <aside class="sidebar">
-          <div class="sidebar-user">
-            <div class="avatar admin-av"><i class="fas fa-user-shield"></i></div>
-            <div><p class="sidebar-name">Administrator</p><span class="role-badge admin">Admin</span></div>
-          </div>
-          <nav class="sidebar-nav">
-            <a href="#" class="sidebar-link" onclick="navigate('admin')"><i class="fas fa-gauge"></i> Dashboard</a>
-            <a href="#" class="sidebar-link active" onclick="navigate('manage-users')"><i class="fas fa-users-gear"></i> Manage Users</a>
-            <a href="#" class="sidebar-link" onclick="navigate('reports')"><i class="fas fa-chart-bar"></i> Reports</a>
-            <a href="#" class="sidebar-link" onclick="navigate('kiosk')"><i class="fas fa-camera"></i> Take Attendance</a>
-            <a href="#" class="sidebar-link logout-link" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</a>
-          </nav>
-        </aside>
-        <div class="dashboard-main">
-          <div class="dash-header">
-            <h2><i class="fas fa-users-gear"></i> Manage Users</h2>
-          </div>
-          <div class="manage-layout">
-            <!-- Add / Edit form -->
-            <div class="card form-card">
-              <h3 id="userFormTitle"><i class="fas fa-user-plus"></i> Add New User</h3>
-              <form id="userForm" novalidate>
-                <div class="form-group">
-                  <label>Full Name</label>
-                  <input type="text" id="uName" placeholder="e.g. Alice Johnson" />
-                  <span class="field-error" id="uNameErr"></span>
-                </div>
-                <div class="form-group">
-                  <label>User ID</label>
-                  <input type="text" id="uId" placeholder="e.g. STU001" />
-                  <span class="field-error" id="uIdErr"></span>
-                </div>
-                <div class="form-group">
-                  <label>Email</label>
-                  <input type="email" id="uEmail" placeholder="alice@example.com" />
-                  <span class="field-error" id="uEmailErr"></span>
-                </div>
-                <div class="form-group">
-                  <label>Password <span style="color:var(--text2);font-weight:400;font-size:0.8rem">(optional)</span></label>
-                  <input type="password" id="uPassword" placeholder="Leave blank for no password" />
-                </div>
-                <div class="form-group">
-                  <label>Role</label>
-                  <select id="uRole">
-                    <option value="student">Student</option>
-                    <option value="staff">Staff</option>
-                  </select>
-                </div>
-                <div class="form-row">
-                  <button type="submit" class="btn btn-primary" id="userFormBtn"><i class="fas fa-plus"></i> Add User</button>
-                  <button type="button" class="btn btn-outline" onclick="resetUserForm()"><i class="fas fa-rotate-left"></i> Reset</button>
-                </div>
-              </form>
-            </div>
-            <!-- Users table -->
-            <div class="card users-table-card">
-              <div class="table-toolbar">
-                <h3><i class="fas fa-list"></i> User List</h3>
-                <input type="text" id="userSearch" placeholder="Search..." oninput="renderUsersTable()" />
-              </div>
-              <table class="data-table">
-                <thead>
-                  <tr><th>Name</th><th>ID</th><th>Email</th><th>Role</th><th>Face</th><th>Actions</th></tr>
-                </thead>
-                <tbody id="usersTableBody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== REPORTS ===== -->
-    <section class="page" id="page-reports">
-      <div class="dashboard-layout">
-        <aside class="sidebar">
-          <div class="sidebar-user">
-            <div class="avatar admin-av"><i class="fas fa-user-shield"></i></div>
-            <div><p class="sidebar-name">Administrator</p><span class="role-badge admin">Admin</span></div>
-          </div>
-          <nav class="sidebar-nav">
-            <a href="#" class="sidebar-link" onclick="navigate('admin')"><i class="fas fa-gauge"></i> Dashboard</a>
-            <a href="#" class="sidebar-link" onclick="navigate('manage-users')"><i class="fas fa-users-gear"></i> Manage Users</a>
-            <a href="#" class="sidebar-link active" onclick="navigate('reports')"><i class="fas fa-chart-bar"></i> Reports</a>
-            <a href="#" class="sidebar-link" onclick="navigate('kiosk')"><i class="fas fa-camera"></i> Take Attendance</a>
-            <a href="#" class="sidebar-link logout-link" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</a>
-          </nav>
-        </aside>
-        <div class="dashboard-main">
-          <div class="dash-header">
-            <h2><i class="fas fa-chart-bar"></i> Attendance Reports</h2>
-            <button class="btn btn-outline" onclick="exportReport()"><i class="fas fa-download"></i> Export CSV</button>
-          </div>
-          <div class="card filter-card" style="margin-bottom:20px">
-            <div class="filter-row">
-              <div class="form-group">
-                <label><i class="fas fa-calendar"></i> Date</label>
-                <input type="date" id="filterDate" />
-              </div>
-              <div class="form-group">
-                <label><i class="fas fa-user"></i> User</label>
-                <select id="filterUser"><option value="">All Users</option></select>
-              </div>
-              <div class="form-group">
-                <label><i class="fas fa-filter"></i> Status</label>
-                <select id="filterStatus">
-                  <option value="">All</option>
-                  <option>Present</option>
-                  <option>Absent</option>
-                </select>
-              </div>
-              <button class="btn btn-primary filter-btn" onclick="applyFilter()"><i class="fas fa-search"></i> Search</button>
-            </div>
-          </div>
-          <div class="card">
-            <table class="data-table">
-              <thead><tr><th>Name</th><th>ID</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
-              <tbody id="reportsBody"></tbody>
-            </table>
-            <div class="table-footer"><span id="reportCount"></span></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Toast -->
-  <div class="toast" id="toast"></div>
-
-  <!-- Enroll Modal -->
-  <div class="modal-overlay" id="enrollModal" style="display:none" onclick="if(event.target===this)closeEnrollModal()">
-    <div class="modal-card">
-      <div class="modal-header">
-        <h3 id="enrollModalTitle"><i class="fas fa-face-smile"></i> Enroll Face</h3>
-        <button class="modal-close" onclick="closeEnrollModal()"><i class="fas fa-xmark"></i></button>
-      </div>
-      <div class="camera-box" style="aspect-ratio:4/3;max-height:280px">
-        <div class="camera-placeholder" id="enrollPlaceholder"><i class="fas fa-camera-slash"></i><p>Starting camera...</p></div>
-        <video id="enrollVideo" autoplay playsinline style="display:none;width:100%;height:100%;object-fit:cover"></video>
-        <canvas id="enrollCanvas" style="display:none"></canvas>
-      </div>
-      <div class="fd-status" id="enrollStatus" style="margin-top:12px"></div>
-      <div style="display:flex;gap:10px;margin-top:14px">
-        <button class="btn btn-primary full-width" id="enrollCaptureBtn" onclick="captureEnroll()" disabled>
-          <i class="fas fa-camera"></i> Start Capture (8 samples)
-        </button>
-        <button class="btn btn-outline" onclick="closeEnrollModal()">Cancel</button>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- Face Images Modal -->
-  <div class="modal-overlay" id="imagesModal" style="display:none" onclick="if(event.target===this)closeImagesModal()">
-    <div class="modal-card modal-wide">
-      <div class="modal-header">
-        <h3 id="imagesModalTitle"><i class="fas fa-images"></i> Enrolled Face Images</h3>
-        <button class="modal-close" onclick="closeImagesModal()"><i class="fas fa-xmark"></i></button>
+
+<!-- ===== ADMIN REPORTS ===== -->
+<section class="page" id="page-admin-reports">
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-user"><div class="avatar admin-av"><i class="fas fa-user-shield"></i></div><div><p class="sidebar-name">Administrator</p><span class="role-badge admin">Admin</span></div></div>
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-link" onclick="navigate('admin-dash')"><i class="fas fa-gauge"></i> Dashboard</a>
+        <a href="#" class="sidebar-link" onclick="navigate('manage-structure')"><i class="fas fa-sitemap"></i> Manage Structure</a>
+        <a href="#" class="sidebar-link" onclick="navigate('manage-teachers')"><i class="fas fa-chalkboard-teacher"></i> Manage Teachers</a>
+        <a href="#" class="sidebar-link" onclick="navigate('manage-students')"><i class="fas fa-user-graduate"></i> Manage Students</a>
+        <a href="#" class="sidebar-link active" onclick="navigate('admin-reports')"><i class="fas fa-chart-bar"></i> Reports</a>
+        <a href="#" class="sidebar-link logout-link" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</a>
+      </nav>
+    </aside>
+    <div class="dashboard-main">
+      <div class="dash-header">
+        <h2><i class="fas fa-chart-bar"></i> Attendance Reports</h2>
+        <button class="btn btn-outline" onclick="exportReport()"><i class="fas fa-download"></i> Export CSV</button>
       </div>
-      <div id="faceImagesGrid" class="face-images-grid"></div>
+      <div class="card filter-card" style="margin-bottom:20px">
+        <div class="filter-row">
+          <div class="form-group"><label><i class="fas fa-calendar"></i> Date</label><input type="date" id="rFilterDate" /></div>
+          <div class="form-group"><label><i class="fas fa-code-branch"></i> Branch</label><select id="rFilterBranch"><option value="">All</option></select></div>
+          <div class="form-group"><label><i class="fas fa-chalkboard"></i> Class</label><select id="rFilterClass"><option value="">All</option></select></div>
+          <div class="form-group"><label><i class="fas fa-layer-group"></i> Section</label><select id="rFilterSection"><option value="">All</option></select></div>
+          <div class="form-group"><label><i class="fas fa-filter"></i> Status</label>
+            <select id="rFilterStatus"><option value="">All</option><option>Present</option><option>Absent</option></select>
+          </div>
+          <button class="btn btn-primary filter-btn" onclick="applyReportFilter()"><i class="fas fa-search"></i> Search</button>
+        </div>
+      </div>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Roll No</th><th>Branch</th><th>Class</th><th>Section</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody id="reportsBody"></tbody>
+        </table>
+        <div class="table-footer"><span id="reportCount"></span></div>
+      </div>
     </div>
   </div>
+</section>
 
-  <script src="script.js"></script>
+<!-- ===== TEACHER DASHBOARD ===== -->
+<section class="page" id="page-teacher-dash">
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-user">
+        <div class="avatar"><i class="fas fa-chalkboard-teacher"></i></div>
+        <div><p class="sidebar-name" id="teacherSidebarName">Teacher</p><span class="role-badge teacher-badge">Teacher</span></div>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-link active" onclick="navigate('teacher-dash')"><i class="fas fa-gauge"></i> Dashboard</a>
+        <a href="#" class="sidebar-link" onclick="navigate('kiosk')"><i class="fas fa-camera"></i> Take Attendance</a>
+        <a href="#" class="sidebar-link" onclick="navigate('teacher-reports')"><i class="fas fa-chart-bar"></i> Reports</a>
+        <a href="#" class="sidebar-link" onclick="navigate('reset')"><i class="fas fa-key"></i> Reset Password</a>
+        <a href="#" class="sidebar-link logout-link" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</a>
+      </nav>
+    </aside>
+    <div class="dashboard-main">
+      <div class="dash-header">
+        <div><h2>Welcome, <span id="teacherDashName">Teacher</span></h2><p class="dash-date" id="teacherDashDate"></p></div>
+        <button class="btn btn-primary" onclick="navigate('kiosk')"><i class="fas fa-camera"></i> Take Attendance</button>
+      </div>
+      <div class="cards-grid mini">
+        <div class="card stat-card"><div class="stat-icon purple"><i class="fas fa-user-graduate"></i></div><div><p>My Students</p><h3 id="tStatStudents">—</h3></div></div>
+        <div class="card stat-card"><div class="stat-icon green"><i class="fas fa-user-check"></i></div><div><p>Present Today</p><h3 id="tStatPresent">—</h3></div></div>
+        <div class="card stat-card"><div class="stat-icon red"><i class="fas fa-user-xmark"></i></div><div><p>Absent Today</p><h3 id="tStatAbsent">—</h3></div></div>
+      </div>
+      <div class="card" style="margin-top:24px">
+        <h3 style="margin-bottom:16px"><i class="fas fa-link"></i> My Assigned Classes</h3>
+        <div id="teacherAssignmentsList"></div>
+      </div>
+      <div class="card" style="margin-top:24px">
+        <h3 style="margin-bottom:16px"><i class="fas fa-table"></i> Today's Attendance</h3>
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Roll No</th><th>Class</th><th>Section</th><th>Time In</th><th>Status</th></tr></thead>
+          <tbody id="teacherSummaryTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TEACHER REPORTS ===== -->
+<section class="page" id="page-teacher-reports">
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-user"><div class="avatar"><i class="fas fa-chalkboard-teacher"></i></div><div><p class="sidebar-name" id="teacherSidebarName2">Teacher</p><span class="role-badge teacher-badge">Teacher</span></div></div>
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-link" onclick="navigate('teacher-dash')"><i class="fas fa-gauge"></i> Dashboard</a>
+        <a href="#" class="sidebar-link" onclick="navigate('kiosk')"><i class="fas fa-camera"></i> Take Attendance</a>
+        <a href="#" class="sidebar-link active" onclick="navigate('teacher-reports')"><i class="fas fa-chart-bar"></i> Reports</a>
+        <a href="#" class="sidebar-link" onclick="navigate('reset')"><i class="fas fa-key"></i> Reset Password</a>
+        <a href="#" class="sidebar-link logout-link" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</a>
+      </nav>
+    </aside>
+    <div class="dashboard-main">
+      <div class="dash-header">
+        <h2><i class="fas fa-chart-bar"></i> My Class Reports</h2>
+        <button class="btn btn-outline" onclick="exportReport()"><i class="fas fa-download"></i> Export CSV</button>
+      </div>
+      <div class="card filter-card" style="margin-bottom:20px">
+        <div class="filter-row">
+          <div class="form-group"><label><i class="fas fa-calendar"></i> Date</label><input type="date" id="trFilterDate" /></div>
+          <div class="form-group"><label><i class="fas fa-chalkboard"></i> Class</label><select id="trFilterClass"><option value="">All My Classes</option></select></div>
+          <div class="form-group"><label><i class="fas fa-filter"></i> Status</label>
+            <select id="trFilterStatus"><option value="">All</option><option>Present</option><option>Absent</option></select>
+          </div>
+          <button class="btn btn-primary filter-btn" onclick="applyTeacherReportFilter()"><i class="fas fa-search"></i> Search</button>
+        </div>
+      </div>
+      <div class="card">
+        <table class="data-table">
+          <thead><tr><th>Name</th><th>Roll No</th><th>Class</th><th>Section</th><th>Date</th><th>Time</th><th>Status</th></tr></thead>
+          <tbody id="teacherReportsBody"></tbody>
+        </table>
+        <div class="table-footer"><span id="teacherReportCount"></span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== MANAGE STRUCTURE ===== -->
+<section class="page" id="page-manage-structure">
+  <div class="dashboard-layout">
+    <aside class="sidebar">
+      <div class="sidebar-user"><div class="avatar admin-av"><i class="fas fa-user-shield"></i></div><div><p class="sidebar-name">Administrator</p><span class="role-badge admin">Admin</span></div></div>
+      <nav class="sidebar-nav">
+        <a href="#" class="sidebar-link" onclick="navigate('admin-dash')"><i class="fas fa-gauge"></i> Dashboard</a>
+        <a href="#" class="sidebar-link active" onclick="navigate('manage-structure')"><i class="fas fa-sitemap"></i> Manage Structure</a>
+        <a href="#" class="sidebar-link" onclick="navigate('manage-teachers')"><i class="fas fa-chalkboard-teacher"></i> Manage Teachers</a>
+        <a href="#" class="sidebar-link" onclick="navigate('manage-students')"><i class="fas fa-user-graduate"></i> Manage Students</a>
+        <a href="#" class="sidebar-link" onclick="navigate('admin-reports')"><i class="fas fa-chart-bar"></i> Reports</a>
+        <a href="#" class="sidebar-link logout-link" onclick="doLogout()"><i class="fas fa-right-from-bracket"></i> Logout</a>
+      </nav>
+    </aside>
+    <div class="dashboard-main">
+      <div class="dash-header">
+        <div>
+          <h2><i class="fas fa-sitemap"></i> College Structure</h2>
+          <p class="dash-date">Define branches, years and sections available in your college</p>
+        </div>
+      </div>
+      <div class="manage-layout">
+        <!-- Add form -->
+        <div class="card form-card">
+          <h3><i class="fas fa-plus-circle"></i> Add Branch / Class / Section</h3>
+          <div class="form-group">
+            <label>Branch Name</label>
+            <input type="text" id="strBranch" placeholder="e.g. BTECH, MCA, MBA, BCA" />
+            <span class="field-error" id="strBranchErr"></span>
+          </div>
+          <div class="form-group">
+            <label>Class / Year</label>
+            <input type="text" id="strClass" placeholder="e.g. 1st Year, 2nd Year, 3rd Year" />
+            <span class="field-error" id="strClassErr"></span>
+          </div>
+          <div class="form-group">
+            <label>Section</label>
+            <input type="text" id="strSection" placeholder="e.g. A, B, C" />
+            <span class="field-error" id="strSectionErr"></span>
+          </div>
+          <button class="btn btn-primary full-width" onclick="addStructureEntry()">
+            <i class="fas fa-plus"></i> Add Entry
+          </button>
+          <div class="otp-info-box" style="margin-top:16px">
+            <i class="fas fa-circle-info"></i>
+            Each row = one unique Branch + Class + Section combination.
+            Add one row per section.
+          </div>
+        </div>
+        <!-- Table -->
+        <div class="card users-table-card">
+          <div class="table-toolbar">
+            <h3><i class="fas fa-list"></i> Current Structure</h3>
+            <input type="text" id="structureSearch" placeholder="Search..." oninput="renderStructureTable()" />
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Branch</th><th>Class / Year</th><th>Section</th><th>Action</th></tr></thead>
+            <tbody id="structureTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Enroll Modal -->
+<div class="modal-overlay" id="enrollModal" style="display:none" onclick="if(event.target===this)closeEnrollModal()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 id="enrollModalTitle"><i class="fas fa-face-smile"></i> Enroll Face</h3>
+      <button class="modal-close" onclick="closeEnrollModal()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="camera-box" style="aspect-ratio:4/3;max-height:280px">
+      <div class="camera-placeholder" id="enrollPlaceholder"><i class="fas fa-camera-slash"></i><p>Starting camera...</p></div>
+      <video id="enrollVideo" autoplay playsinline style="display:none;width:100%;height:100%;object-fit:cover"></video>
+      <canvas id="enrollCanvas" style="display:none"></canvas>
+    </div>
+    <div class="fd-status" id="enrollStatus" style="margin-top:12px"></div>
+    <div style="display:flex;gap:10px;margin-top:14px">
+      <button class="btn btn-primary full-width" id="enrollCaptureBtn" onclick="captureEnroll()" disabled>
+        <i class="fas fa-camera"></i> Start Capture (8 samples)
+      </button>
+      <button class="btn btn-outline" onclick="closeEnrollModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Face Images Modal -->
+<div class="modal-overlay" id="imagesModal" style="display:none" onclick="if(event.target===this)closeImagesModal()">
+  <div class="modal-card modal-wide">
+    <div class="modal-header">
+      <h3 id="imagesModalTitle"><i class="fas fa-images"></i> Enrolled Face Images</h3>
+      <button class="modal-close" onclick="closeImagesModal()"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div id="faceImagesGrid" class="face-images-grid"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
