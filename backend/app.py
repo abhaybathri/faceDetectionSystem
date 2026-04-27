@@ -33,5 +33,5 @@ def serve_frontend(path):
 
 if __name__ == "__main__":
     init_db()
-    print("\n✅  FaceAttend backend running at http://localhost:5000\n")
+    print("OK  FaceAttend backend running at http://localhost:5000\n")
     app.run(debug=True, host="0.0.0.0", port=5000)

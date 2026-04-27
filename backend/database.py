@@ -1,17 +1,14 @@
 """
-SQLite database setup and helpers.
-Tables: users, face_encodings, attendance, admins
+SQLite database — FaceAttend
+Tables: admins, users, face_encodings, face_images, attendance
 """
 
-import sqlite3
-import os
-import hashlib
+import sqlite3, os, hashlib
 
 DB_PATH = os.path.join(os.path.dirname(__file__), "faceattend.db")
 
 
 def get_db():
-    """Return a new DB connection with row_factory."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA foreign_keys = ON")
@@ -19,48 +16,9 @@ def get_db():
 
 
 def init_db():
-    """Create all tables and seed default admin."""
     conn = get_db()
     c = conn.cursor()
 
-    # Users table
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id          INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_code   TEXT    UNIQUE NOT NULL,
-            name        TEXT    NOT NULL,
-            email       TEXT    UNIQUE NOT NULL,
-            role        TEXT    NOT NULL DEFAULT 'student',
-            password    TEXT    NOT NULL,
-            avatar_path TEXT,
-            created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-    # Face encodings (128-d vector stored as comma-separated floats)
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS face_encodings (
-            id          INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-            encoding    TEXT    NOT NULL,
-            created_at  DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-    """)
-
-    # Attendance records
-    c.execute("""
-        CREATE TABLE IF NOT EXISTS attendance (
-            id          INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id     INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-            date        TEXT    NOT NULL,
-            time_in     TEXT    NOT NULL,
-            status      TEXT    NOT NULL DEFAULT 'Present',
-            method      TEXT    DEFAULT 'face',
-            UNIQUE(user_id, date)
-        )
-    """)
-
-    # Admins table
     c.execute("""
         CREATE TABLE IF NOT EXISTS admins (
             id       INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -70,32 +28,58 @@ def init_db():
         )
     """)
 
-    # Seed default admin (admin@demo.com / admin123)
-    admin_pw = _hash_password("admin123")
     c.execute("""
-        INSERT OR IGNORE INTO admins (username, password, name)
-        VALUES (?, ?, ?)
-    """, ("admin@demo.com", admin_pw, "Administrator"))
+        CREATE TABLE IF NOT EXISTS users (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_code  TEXT UNIQUE NOT NULL,
+            name       TEXT NOT NULL,
+            email      TEXT UNIQUE NOT NULL,
+            role       TEXT NOT NULL DEFAULT 'student',
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
 
-    # Seed demo student
-    student_pw = _hash_password("password123")
+    # Stores Facenet 128-d embedding per sample
     c.execute("""
-        INSERT OR IGNORE INTO users (user_code, name, email, role, password)
-        VALUES (?, ?, ?, ?, ?)
-    """, ("STU001", "Alice Johnson", "user@demo.com", "student", student_pw))
+        CREATE TABLE IF NOT EXISTS face_encodings (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            encoding   TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    # Stores the actual captured face image (base64 JPEG) for viewing
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS face_images (
+            id         INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            image_b64  TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS attendance (
+            id       INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id  INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            date     TEXT NOT NULL,
+            time_in  TEXT NOT NULL,
+            status   TEXT NOT NULL DEFAULT 'Present',
+            method   TEXT DEFAULT 'face',
+            UNIQUE(user_id, date)
+        )
+    """)
+
+    # Default admin
+    c.execute("INSERT OR IGNORE INTO admins (username, password, name) VALUES (?,?,?)",
+              ("admin@demo.com", _hash("admin123"), "Administrator"))
 
     conn.commit()
     conn.close()
-    print("✅  Database initialised:", DB_PATH)
+    print("OK Database initialised:", DB_PATH)
 
 
-def _hash_password(pw: str) -> str:
-    return hashlib.sha256(pw.encode()).hexdigest()
-
-
-def verify_password(plain: str, hashed: str) -> bool:
-    return _hash_password(plain) == hashed
-
-
-def hash_password(pw: str) -> str:
-    return _hash_password(pw)
+def _hash(pw): return hashlib.sha256(pw.encode()).hexdigest()
+def hash_password(pw): return _hash(pw)
+def verify_password(plain, hashed): return _hash(plain) == hashed
